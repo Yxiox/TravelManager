@@ -30,7 +30,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             TravelManagerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize())
+                Scaffold(modifier = Modifier.fillMaxSize(),
+                    containerColor = Color(red = 50, green = 50, blue = 50)
+                    )
                 { innerPadding ->
                     Column (Modifier.padding(innerPadding)) {
                         NavHost (

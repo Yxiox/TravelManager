@@ -1,10 +1,13 @@
 package com.example.travelmanager.screens
 
+import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,10 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myregistry.components.ErrorDialog
 import com.example.myregistry.components.MyPasswordField
 import com.example.myregistry.components.MyTextField
+import com.example.travelmanager.R
 import com.example.travelmanager.data.LoginrUserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,19 +36,30 @@ fun LoginScreen(
 
     val loginUserViewModel : LoginrUserViewModel = viewModel()
     var loginUser = loginUserViewModel.uiState.collectAsState()
+    val ctx = LocalContext.current
 
     Column (verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(65.dp)) {
-        MyTextField(value=loginUser.value.login, onValueChange = {loginUserViewModel.onLoginChange(it)}, "Login", false)
-        MyPasswordField(value=loginUser.value.senha, onValueChange = {loginUserViewModel.onSenhaChange(it)}, "Senha", false)
-        OutlinedButton(onClick = {if (true /*Fazer verificação com dados do banco*/){
-            onLogin()
-        } },
+        Image(painter = painterResource(R.drawable.logo), contentDescription = "Logo", modifier = Modifier.size(200.dp))
+        MyTextField(value=loginUser.value.login, onValueChange = {loginUserViewModel.onLoginChange(it)}, "Login", true)
+        MyPasswordField(value=loginUser.value.senha, onValueChange = {loginUserViewModel.onSenhaChange(it)}, "Senha", true)
+        OutlinedButton(onClick = {
+            if (loginUserViewModel.login()){
+                Toast.makeText(ctx, "Login Succesfull", Toast.LENGTH_SHORT).show()
+                onLogin()
+            }
+                                 },
 
             Modifier
                 .fillMaxWidth()
                 .padding(vertical = 5.dp)
                 .height(60.dp), shape = RoundedCornerShape(5.dp), colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.White, contentColor = Color.DarkGray)) { Text(text = "Login") }
 
+            if (loginUser.value.errorMessage.isNotBlank()){
+                ErrorDialog(error = loginUser.value.errorMessage,
+                    onDismissRequest = {
+                        loginUserViewModel.cleanErrorMessage()
+                    })
+            }
 
         OutlinedButton(onClick = onRegister,
             Modifier

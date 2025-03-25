@@ -45,7 +45,7 @@ fun MyPasswordField(value:String, onValueChange: (String) -> Unit, label:String,
     var shown = remember {
         mutableStateOf(false)
     }
-    Row (modifier = Modifier.fillMaxWidth().padding(5.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+    Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
         OutlinedTextField(value = value,
             onValueChange = {
                 isTouched.value = true
@@ -92,7 +92,7 @@ fun MyPasswordField(value:String, confirmValue:String, onValueChange: (String) -
         mutableStateOf(false)
     }
 
-    Row (modifier = Modifier.fillMaxWidth().padding(5.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+    Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
         OutlinedTextField(value = value,
             onValueChange = {
                 isTouched.value = true

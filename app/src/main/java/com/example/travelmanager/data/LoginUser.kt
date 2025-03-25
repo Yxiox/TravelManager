@@ -24,12 +24,9 @@ data class LoginUser(
 }
 
 class LoginrUserViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(RegisterUser())
-    val uiState : StateFlow<RegisterUser> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(LoginUser())
+    val uiState : StateFlow<LoginUser> = _uiState.asStateFlow()
 
-    fun onEmailChange(email:String){
-        _uiState.value = _uiState.value.copy(email = email)
-    }
 
     fun onLoginChange(login: String){
         _uiState.value = _uiState.value.copy(login = login)
@@ -41,12 +38,8 @@ class LoginrUserViewModel : ViewModel() {
 
     }
 
-    fun onConfirmarSenhaChange(senha:String){
-        _uiState.value = _uiState.value.copy(confirmarsenha = senha)
 
-    }
-
-    fun register():Boolean {
+    fun login():Boolean {
         try {
             _uiState.value.validateAllFields()
             return true
@@ -57,8 +50,6 @@ class LoginrUserViewModel : ViewModel() {
             return false
 
         }
-
-
     }
 
     fun cleanErrorMessage() {
