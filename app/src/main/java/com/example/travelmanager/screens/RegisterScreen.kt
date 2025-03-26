@@ -40,7 +40,7 @@ fun RegisterScreen(onRegister:(String)->Unit,
 
     Column (verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(65.dp)) {
         Image(painter = painterResource(R.drawable.logo), contentDescription = "Logo", modifier = Modifier.size(200.dp))
-        MyTextField(value=registerUser.value.email, onValueChange = {registerUserViewModel.onEmailChange(it)}, "E-mail", true)
+        MyTextField(value=registerUser.value.name, onValueChange = {registerUserViewModel.onEmailChange(it)}, "Nome", true)
         MyTextField(value=registerUser.value.login, onValueChange = {registerUserViewModel.onLoginChange(it)}, "Login", true)
         MyPasswordField(value=registerUser.value.senha, onValueChange = {registerUserViewModel.onSenhaChange(it)}, "Senha", true)
         MyPasswordField(value=registerUser.value.confirmarsenha, confirmValue = registerUser.value.senha, onValueChange = {registerUserViewModel.onConfirmarSenhaChange(it)}, "Confirmar Senha", true)

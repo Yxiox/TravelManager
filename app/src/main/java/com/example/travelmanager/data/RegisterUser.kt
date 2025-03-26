@@ -1,25 +1,23 @@
 package com.example.travelmanager.data
 
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlin.math.log
 
 data class RegisterUser(
     val login : String = "",
-    val email : String = "",
+    val name : String = "",
     val senha : String = "",
     val confirmarsenha : String = "",
     val errorMessage : String = ""
 ) {
     fun validateAllFields() {
+        if (name.isBlank()){
+            throw Exception("Nome é obrigatório")
+        }
         if (login.isBlank()){
             throw Exception("Login é obrigatório")
-        }
-        if (email.isBlank()){
-            throw Exception("E-mail é obrigatório")
         }
         if (senha.isBlank()){
             throw Exception("Senha é obrigatório")
@@ -39,7 +37,7 @@ class RegisterUserViewModel : ViewModel() {
     val uiState : StateFlow<RegisterUser> = _uiState.asStateFlow()
 
     fun onEmailChange(email:String){
-        _uiState.value = _uiState.value.copy(email = email)
+        _uiState.value = _uiState.value.copy(name = email)
     }
 
     fun onLoginChange(login: String){

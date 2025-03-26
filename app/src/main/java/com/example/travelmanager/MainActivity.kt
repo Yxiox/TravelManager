@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             TravelManagerTheme {
+
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     containerColor = Color(red = 50, green = 50, blue = 50)
                     )
@@ -49,8 +50,7 @@ class MainActivity : ComponentActivity() {
                             composable(route="MainScreen"){
                                 MainScreen(onEditTrip = {}, onRegisterTrip = {})
                             }
-//                            composable(route="ScreenC"){
-//                            }
+
 
                         }
                     }
