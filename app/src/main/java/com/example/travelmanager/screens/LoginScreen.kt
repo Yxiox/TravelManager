@@ -26,7 +26,7 @@ import com.example.myregistry.components.ErrorDialog
 import com.example.myregistry.components.MyPasswordField
 import com.example.myregistry.components.MyTextField
 import com.example.travelmanager.R
-import com.example.travelmanager.data.LoginrUserViewModel
+import com.example.travelmanager.data.LoginUserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +34,7 @@ fun LoginScreen(
     onLogin:()->Unit,
     onRegister:()->Unit){
 
-    val loginUserViewModel : LoginrUserViewModel = viewModel()
+    val loginUserViewModel : LoginUserViewModel = viewModel()
     var loginUser = loginUserViewModel.uiState.collectAsState()
     val ctx = LocalContext.current
 

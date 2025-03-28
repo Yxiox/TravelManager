@@ -23,7 +23,7 @@ data class LoginUser(
     }
 }
 
-class LoginrUserViewModel : ViewModel() {
+class LoginUserViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUser())
     val uiState : StateFlow<LoginUser> = _uiState.asStateFlow()
 

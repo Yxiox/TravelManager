@@ -8,11 +8,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,6 +40,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.myregistry.components.MyTextField
 import java.util.Locale
 
@@ -39,11 +51,8 @@ import java.util.Locale
 @Composable
 fun MainScreen(
     onRegisterTrip:()->Unit,
-    onEditTrip:()->Unit,){
-    Scaffold (containerColor = Color(red = 50, green = 50, blue = 50)
-        ,topBar = { TopAppBar(title = { Text("Travel Manager", fontWeight = FontWeight.W900, fontSize = 25.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.LightGray,titleContentColor = Color.White))},
-       )
+    onEditTrip:()->Unit){
+    Scaffold (containerColor = Color(red = 50, green = 50, blue = 50))
     {
         Column ( modifier = Modifier.verticalScroll(state = rememberScrollState(), enabled = true)) {
 
