@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,15 +29,21 @@ import com.example.myregistry.components.MyPasswordField
 import com.example.myregistry.components.MyTextField
 import com.example.travelmanager.R
 import com.example.travelmanager.data.RegisterUserViewModel
+import com.example.travelmanager.database.AppDatabase
+import com.example.travelmanager.factory.RegisterUserViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(onRegister:(String)->Unit,
                    backToLogin:()->Unit)
 {
-    val registerUserViewModel : RegisterUserViewModel = viewModel()
-    var registerUser = registerUserViewModel.uiState.collectAsState()
     val ctx = LocalContext.current
+    val userDao = AppDatabase.getDatabase(ctx).userDao()
+
+    val registerUserViewModel : RegisterUserViewModel = viewModel(
+        factory = RegisterUserViewModelFactory(userDao)
+    )
+    var registerUser = registerUserViewModel.uiState.collectAsState()
 
     Column (verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(65.dp)) {
         Image(painter = painterResource(R.drawable.logo), contentDescription = "Logo", modifier = Modifier.size(200.dp))
@@ -45,9 +52,8 @@ fun RegisterScreen(onRegister:(String)->Unit,
         MyPasswordField(value=registerUser.value.senha, onValueChange = {registerUserViewModel.onSenhaChange(it)}, "Senha", true)
         MyPasswordField(value=registerUser.value.confirmarsenha, confirmValue = registerUser.value.senha, onValueChange = {registerUserViewModel.onConfirmarSenhaChange(it)}, "Confirmar Senha", true)
         OutlinedButton(onClick = {
-            if (registerUserViewModel.register()){
-                Toast.makeText(ctx, "User registered", Toast.LENGTH_SHORT).show()
-            }
+          registerUserViewModel.register()
+
         },
             Modifier
                 .fillMaxWidth()
@@ -58,9 +64,20 @@ fun RegisterScreen(onRegister:(String)->Unit,
             ErrorDialog(
                 error = registerUser.value.errorMessage,
                 onDismissRequest = {
-                    registerUserViewModel.cleanErrorMessage()
+                    registerUserViewModel.cleanValidationValues()
                 })
         }
+
+        LaunchedEffect(registerUser.value.isSaved) {
+            if (registerUser.value.isSaved){
+                Toast.makeText(ctx, "User registered", Toast.LENGTH_SHORT).show()
+                registerUserViewModel.cleanValidationValues()
+                backToLogin()
+            }
+            else{
+            }
+        }
+
         TextButton(onClick = backToLogin) { Text(text = "Já possui cadastro?") }
     }
 

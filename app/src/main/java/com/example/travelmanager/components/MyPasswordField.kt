@@ -59,7 +59,10 @@ fun MyPasswordField(value:String, onValueChange: (String) -> Unit, label:String,
                 focusedLabelColor = Color.White,
                 cursorColor = Color.White,
                 unfocusedBorderColor = Color.Gray,
-                unfocusedLabelColor = Color.Gray),
+                unfocusedLabelColor = Color.Gray,
+                disabledTextColor = Color.Gray,
+                unfocusedTextColor = Color.White,
+                focusedTextColor = Color.White,),
             label = { Text(text = label) },
             supportingText = {if (required) {if (isTouched.value && value.isBlank()){
                 Text(text = "Field $label is required")
@@ -106,7 +109,11 @@ fun MyPasswordField(value:String, confirmValue:String, onValueChange: (String) -
                 focusedLabelColor = Color.White,
                 cursorColor = Color.White,
                 unfocusedBorderColor = Color.Gray,
-                unfocusedLabelColor = Color.Gray),
+                unfocusedLabelColor = Color.Gray,
+                disabledTextColor = Color.Gray,
+                unfocusedTextColor = Color.White,
+                focusedTextColor = Color.White,
+                ),
             label = { Text(text = label) },
             supportingText = {if (required) {if (isTouched.value && !value.equals(confirmValue)){
                 Text(text = "As senhas não conferem")

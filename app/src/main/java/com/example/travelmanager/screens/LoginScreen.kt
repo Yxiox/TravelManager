@@ -14,6 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +28,8 @@ import com.example.myregistry.components.MyPasswordField
 import com.example.myregistry.components.MyTextField
 import com.example.travelmanager.R
 import com.example.travelmanager.data.LoginUserViewModel
+import com.example.travelmanager.database.AppDatabase
+import com.example.travelmanager.factory.LoginUserViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,20 +37,21 @@ fun LoginScreen(
     onLogin:()->Unit,
     onRegister:()->Unit){
 
-    val loginUserViewModel : LoginUserViewModel = viewModel()
-    var loginUser = loginUserViewModel.uiState.collectAsState()
     val ctx = LocalContext.current
+    val userDao = AppDatabase.getDatabase(ctx).userDao()
+
+    val loginUserViewModel : LoginUserViewModel = viewModel(
+        factory = LoginUserViewModelFactory(userDao)
+    )
+    var loginUser = loginUserViewModel.uiState.collectAsState()
 
     Column (verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(65.dp)) {
         Image(painter = painterResource(R.drawable.logo), contentDescription = "Logo", modifier = Modifier.size(200.dp))
         MyTextField(value=loginUser.value.login, onValueChange = {loginUserViewModel.onLoginChange(it)}, "Login", true)
         MyPasswordField(value=loginUser.value.senha, onValueChange = {loginUserViewModel.onSenhaChange(it)}, "Senha", true)
         OutlinedButton(onClick = {
-            if (loginUserViewModel.login()){
-                Toast.makeText(ctx, "Login Succesfull", Toast.LENGTH_SHORT).show()
-                onLogin()
-            }
-                                 },
+            loginUserViewModel.login(loginUser.value.login, loginUser.value.senha)
+            },
 
             Modifier
                 .fillMaxWidth()
@@ -57,9 +61,20 @@ fun LoginScreen(
             if (loginUser.value.errorMessage.isNotBlank()){
                 ErrorDialog(error = loginUser.value.errorMessage,
                     onDismissRequest = {
-                        loginUserViewModel.cleanErrorMessage()
+                        loginUserViewModel.cleanValidationValues()
                     })
             }
+
+        LaunchedEffect(loginUser.value.logged) {
+            if (loginUser.value.logged){
+                Toast.makeText(ctx, "Login Succesfull", Toast.LENGTH_SHORT).show()
+                loginUserViewModel.cleanValidationValues()
+                onLogin()
+            }
+            else{
+            }
+
+        }
 
         OutlinedButton(onClick = onRegister,
             Modifier

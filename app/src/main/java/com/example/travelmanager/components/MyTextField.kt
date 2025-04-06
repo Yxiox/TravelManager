@@ -36,7 +36,12 @@ fun MyTextField(value:String, onValueChange: (String) -> Unit, label:String, req
             focusedLabelColor = Color.White,
             cursorColor = Color.White,
             unfocusedBorderColor = Color.Gray,
-            unfocusedLabelColor = Color.Gray),
+            unfocusedLabelColor = Color.Gray,
+            disabledTextColor = Color.Gray,
+            unfocusedTextColor = Color.White,
+            focusedTextColor = Color.White),
+
+
         label = { Text(text = label) },
         supportingText = {if (required) {if (isTouched.value && value.isBlank()){
             Text(text = "Field $label is required")
