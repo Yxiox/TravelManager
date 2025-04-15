@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myregistry.components.MyTextField
 import com.example.travelmanager.data.EditTravelViewModel
+import com.example.travelmanager.database.AppDatabase
+import com.example.travelmanager.factory.EditTravelViewModelFactory
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -47,12 +49,16 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TravelForm(id:Int?){
+    val ctx = LocalContext.current
+
+    val travelDao = AppDatabase.getDatabase(ctx).travelDao()
 
     Log.d("onEdit", "Id ${id}")
 
-    val editTravelViewModel : EditTravelViewModel = viewModel()
+    val editTravelViewModel : EditTravelViewModel = viewModel(
+        factory = EditTravelViewModelFactory(travelDao)
+    )
     var travel = editTravelViewModel.uiState.collectAsState()
-    val ctx = LocalContext.current
 
     var selectedOption by remember { mutableStateOf("") }
     Column (modifier = Modifier.verticalScroll(state = rememberScrollState(), enabled = true).padding(25.dp).fillMaxSize()) {
@@ -81,7 +87,7 @@ fun TravelForm(id:Int?){
 
         Row (Modifier.border(width = 0.2.dp, color = Color.White, shape = RoundedCornerShape(5.dp)).fillMaxWidth().padding(horizontal = 5.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Text("Data de início: ${
-                travel.value.inicio!!.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}", color = Color.White, fontWeight = FontWeight.W900)
+                travel.value.inicio?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}", color = Color.White, fontWeight = FontWeight.W900, modifier = Modifier.padding(5.dp))
             OutlinedButton(onClick = {showDatePickerInicio = true}, colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White), border = BorderStroke(0.2.dp, Color.White), shape = RoundedCornerShape(5.dp)) { Text("Alterar Data") }
         }
 

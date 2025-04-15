@@ -25,9 +25,9 @@ interface TravelDao {
     @Delete
     suspend fun delete(travel: Travel)
 
-//    @Query("select * from Travel t where t.id =:id")
-//    suspend fun findById(id:Int) : Travel?
-//
+    @Query("select * from Travel t where t.id =:id")
+    suspend fun findById(id:Int) : Travel?
+
     @Query("select * from Travel t")
     fun findAll(): Flow<List<Travel>>
 

@@ -138,6 +138,9 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("TravelForm/${it}")
                                 }, onRegisterTrip = {})
                             }
+                            composable(route = "TravelForm") {
+                                TravelForm(null)
+                            }
                             composable(route = "TravelForm/{id}", arguments = listOf(navArgument("id"){type=NavType.IntType})) { backStackEntry ->
                                 val id = backStackEntry.arguments?.getInt("id")
                                 TravelForm(id)
