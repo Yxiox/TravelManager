@@ -1,6 +1,7 @@
 package com.example.travelmanager.screens
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -36,8 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myregistry.components.MyTextField
-import com.example.travelmanager.data.LoginUserViewModel
-import com.example.travelmanager.data.TravelViewModel
+import com.example.travelmanager.data.EditTravelViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -46,10 +46,12 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TravelForm(){
+fun TravelForm(id:Int?){
 
-    val travelViewModel : TravelViewModel = viewModel()
-    var travel = travelViewModel.uiState.collectAsState()
+    Log.d("onEdit", "Id ${id}")
+
+    val editTravelViewModel : EditTravelViewModel = viewModel()
+    var travel = editTravelViewModel.uiState.collectAsState()
     val ctx = LocalContext.current
 
     var selectedOption by remember { mutableStateOf("") }
@@ -59,12 +61,12 @@ fun TravelForm(){
         Row (verticalAlignment = Alignment.CenterVertically) {
             RadioButton(
                 selected = travel.value.finalidade == "lazer",
-                onClick = { travelViewModel.onFinalidadeChange("lazer") }
+                onClick = { editTravelViewModel.onFinalidadeChange("lazer") }
             )
             Text(text = "À lazer", modifier = Modifier.padding(start = 8.dp))
             RadioButton(
                 selected = travel.value.finalidade == "negocios",
-                onClick = { travelViewModel.onFinalidadeChange("negocios") }
+                onClick = { editTravelViewModel.onFinalidadeChange("negocios") }
             )
             Text(text = "À negócios", modifier = Modifier.padding(start = 8.dp))
         }
@@ -90,7 +92,7 @@ fun TravelForm(){
                 confirmButton = {
                     TextButton(onClick = {
                         datePickerState.selectedDateMillis?.let {
-                                travelViewModel.onInicioChange(Instant.ofEpochMilli(it)
+                                editTravelViewModel.onInicioChange(Instant.ofEpochMilli(it)
                                     .atZone(ZoneId.systemDefault())
                                     .toLocalDate())
                         }

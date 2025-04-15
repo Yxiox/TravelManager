@@ -14,6 +14,7 @@ import kotlin.jvm.Throws
 data class RegisterUser(
     val login : String = "",
     val name : String = "",
+    val email : String = "",
     val senha : String = "",
     val confirmarsenha : String = "",
     val errorMessage : String = "",
@@ -22,6 +23,9 @@ data class RegisterUser(
     fun validateAllFields() {
         if (name.isBlank()){
             throw Exception("Nome é obrigatório")
+        }
+        if (email.isBlank()){
+            throw Exception("E-mail é obrigatório")
         }
         if (login.isBlank()){
             throw Exception("Login é obrigatório")
@@ -41,7 +45,8 @@ data class RegisterUser(
         return User(
             login = login,
             name = name,
-            senha = senha
+            senha = senha,
+            email = email
         )
     }
 }
@@ -53,7 +58,11 @@ class RegisterUserViewModel(
     val uiState : StateFlow<RegisterUser> = _uiState.asStateFlow()
 
     fun onEmailChange(email:String){
-        _uiState.value = _uiState.value.copy(name = email)
+        _uiState.value = _uiState.value.copy(email = email)
+    }
+
+    fun onNameChange(name:String){
+        _uiState.value = _uiState.value.copy(name = name)
     }
 
     fun onLoginChange(login: String){
@@ -81,8 +90,14 @@ class RegisterUserViewModel(
 
                     try {
                         if (u == null){
-                            userDao.insert(_uiState.value.toUser())
-                            _uiState.value = _uiState.value.copy(isSaved = true)
+                            val emailRegex = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
+                            if (_uiState.value.email.matches(emailRegex)){
+                                userDao.insert(_uiState.value.toUser())
+                                _uiState.value = _uiState.value.copy(isSaved = true)
+                            }
+                            else{
+                                throw Exception("Formatação de e-mail incorreta")
+                            }
                         }
                         else{
                             throw Exception("Login já em uso")

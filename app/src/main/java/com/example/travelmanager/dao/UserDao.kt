@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
 import com.example.travelmanager.entity.User
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
@@ -26,7 +27,7 @@ interface UserDao {
     suspend fun findById(id:Int) : User?
 
     @Query("select * from User u order by u.name")
-    suspend fun findAll():List<User>
+    fun findAll():Flow<List<User>>
 
     @Query("select * from User u where u.login =:login")
     suspend fun findByLogin(login:String):User

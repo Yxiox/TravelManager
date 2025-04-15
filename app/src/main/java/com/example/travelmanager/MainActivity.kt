@@ -33,10 +33,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.travelmanager.screens.LoginScreen
 import com.example.travelmanager.screens.MainScreen
 import com.example.travelmanager.screens.RegisterScreen
@@ -54,7 +56,9 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val currentBackStackEntry = navController.currentBackStackEntryFlow.collectAsState(initial = null)
             TravelManagerTheme {
-
+                //onMainScreen
+                //onAddTravel
+                //onAbout
 
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     containerColor = Color(red = 50, green = 50, blue = 50),
@@ -130,10 +134,13 @@ class MainActivity : ComponentActivity() {
                                     backToLogin = { navController.navigateUp() })
                             }
                             composable(route = "MainScreen") {
-                                MainScreen(onEditTrip = {}, onRegisterTrip = {})
+                                MainScreen(onEditTrip = {
+                                    navController.navigate("TravelForm/${it}")
+                                }, onRegisterTrip = {})
                             }
-                            composable(route = "TravelForm") {
-                                TravelForm()
+                            composable(route = "TravelForm/{id}", arguments = listOf(navArgument("id"){type=NavType.IntType})) { backStackEntry ->
+                                val id = backStackEntry.arguments?.getInt("id")
+                                TravelForm(id)
                             }
                         }
                     }
