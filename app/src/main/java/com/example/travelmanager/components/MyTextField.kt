@@ -1,5 +1,6 @@
 package com.example.myregistry.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -27,7 +28,7 @@ fun MyTextField(value:String, onValueChange: (String) -> Unit, label:String, req
             isTouched.value = true
             onValueChange(it)
         },
-        Modifier.padding(vertical = 5.dp).focusRequester(focus).onFocusEvent { if (it.hasFocus) {
+        Modifier.padding(vertical = 5.dp).fillMaxWidth().focusRequester(focus).onFocusEvent { if (it.hasFocus) {
         isTouched.value = true
         }
         },
