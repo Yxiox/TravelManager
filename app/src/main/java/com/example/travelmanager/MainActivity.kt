@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -39,6 +40,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.travelmanager.data.DataManager
 import com.example.travelmanager.screens.LoginScreen
 import com.example.travelmanager.screens.MainScreen
 import com.example.travelmanager.screens.RegisterScreen
@@ -55,11 +57,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             val currentBackStackEntry = navController.currentBackStackEntryFlow.collectAsState(initial = null)
-            TravelManagerTheme {
-                //onMainScreen
-                //onAddTravel
-                //onAbout
 
+            TravelManagerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     containerColor = Color(red = 50, green = 50, blue = 50),
                     topBar = { if (currentBackStackEntry.value?.destination?.route != "LoginScreen" && currentBackStackEntry.value?.destination?.route != "RegisterScreen") {TopAppBar(title = { Text("Travel Manager", fontWeight = FontWeight.W900, fontSize = 25.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) },
@@ -115,7 +114,7 @@ class MainActivity : ComponentActivity() {
                     }
                     )
                 { innerPadding ->
-                    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+                    val dataManager:DataManager = DataManager(context = LocalContext.current)
                     Column(Modifier.padding(innerPadding)) {
                         NavHost(
                             navController = navController,
@@ -125,7 +124,8 @@ class MainActivity : ComponentActivity() {
                             composable(route = "LoginScreen") {
                                 LoginScreen(
                                     onLogin = { navController.navigate("MainScreen") },
-                                    onRegister = { navController.navigate("RegisterScreen") })
+                                    onRegister = { navController.navigate("RegisterScreen") },
+                                    dataManager = dataManager)
                             }
 
                             composable(route = "RegisterScreen") {
@@ -134,16 +134,17 @@ class MainActivity : ComponentActivity() {
                                     backToLogin = { navController.navigateUp() })
                             }
                             composable(route = "MainScreen") {
-                                MainScreen(onEditTrip = {
-                                    navController.navigate("TravelForm/${it}")
-                                }, onRegisterTrip = {})
+                                MainScreen(
+                                    onEdit = {navController.navigate("TravelForm/${it}")})
                             }
                             composable(route = "TravelForm") {
-                                TravelForm(null)
+                                TravelForm(id=null,
+                                    backToMain = {navController.navigateUp()} )
                             }
                             composable(route = "TravelForm/{id}", arguments = listOf(navArgument("id"){type=NavType.IntType})) { backStackEntry ->
                                 val id = backStackEntry.arguments?.getInt("id")
-                                TravelForm(id)
+                                TravelForm(id = id,
+                                    backToMain = {navController.navigateUp()} )
                             }
                         }
                     }

@@ -19,12 +19,15 @@ import androidx.compose.ui.unit.dp
 import com.example.travelmanager.entity.Travel
 
 @Composable
-fun TravelCard(travel: Travel){
+fun TravelCard(travel: Travel,
+               onEdit:(Int) -> Unit){
     Card (modifier = Modifier.fillMaxWidth().padding(15.dp).height(80.dp)){
         Row (modifier = Modifier.pointerInput(Unit){
-            detectTapGestures {
-
-            }
+            detectTapGestures (
+                onLongPress = {
+                    onEdit(travel.id)
+                }
+            )
         }) {
             Column {
                 if (travel.finalidade == "lazer") Icon(Icons.Default.Favorite, contentDescription = "") else Icon(Icons.Default.Email, contentDescription = "")

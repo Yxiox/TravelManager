@@ -13,34 +13,41 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.travelmanager.database.AppDatabase
-import com.example.travelmanager.entity.User
 
 import com.example.travelmanager.components.TravelCard
-import com.example.travelmanager.entity.Travel
-import java.time.LocalDate
+import com.example.travelmanager.data.TravelViewModel
+import com.example.travelmanager.factory.LoadTravelViewModelFactory
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(onRegisterTrip:()->Unit,
-    onEditTrip:()->Unit){
+fun MainScreen(onEdit: (Int?) -> Unit){
 
     val ctx = LocalContext.current
     val travelDao = AppDatabase.getDatabase(ctx).travelDao()
 
-    val travels = listOf( Travel(id = 1, destino = "bahamas", fim = LocalDate.now().toString(), inicio = LocalDate.now().toString(), userId = 1, orcamento = 1f, finalidade = "lazer"))
+    val travelViewModel:TravelViewModel = viewModel(
+        factory = LoadTravelViewModelFactory(travelDao = travelDao)
+    )
+
+    val travelsState = travelViewModel.travels.collectAsState(
+        emptyList()
+    )
 
     Scaffold (containerColor = Color(red = 50, green = 50, blue = 50))
     {
         Column () {
             LazyColumn {
-                items(travels) { travel ->
-                    TravelCard(travel)
+                items(travelsState.value) { travel ->
+                    TravelCard(travel, onEdit = {
+                        onEdit(it)
+                    })
                 }
             }
         }

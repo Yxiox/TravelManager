@@ -3,6 +3,7 @@ package com.example.travelmanager.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelmanager.dao.TravelDao
+import com.example.travelmanager.entity.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,13 +11,15 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 data class Travel(
+    val id:Int = 0,
     val destino : String = "",
     val inicio : String?,
     val fim : String?,
     val finalidade : String = "",
     val orcamento : Float = 0f,
     val userId : Int = 0,
-    val errorMessage : String = ""
+    val errorMessage : String = "",
+    val isSaved:Boolean = false
 ){
     fun validateFields(){
         if (destino.isBlank()){
@@ -29,10 +32,25 @@ data class Travel(
             throw Exception("Data de retorno é obrigatório")
         }
     }
+    fun toTravel():com.example.travelmanager.entity.Travel{
+
+        return com.example.travelmanager.entity.Travel(
+            id = id,
+            destino = destino,
+            inicio = inicio!!,
+            fim = fim!!,
+            finalidade = finalidade,
+            orcamento = orcamento,
+            userId = userId
+        )
+    }
 
 }
 
-class EditTravelViewModel (id:Int?, travelDao: TravelDao) : ViewModel(){
+class EditTravelViewModel (
+    id:Int?,
+    private val travelDao: TravelDao
+) : ViewModel(){
     private val _uiState = MutableStateFlow(Travel(
         destino = "",
         inicio = null,
@@ -44,11 +62,11 @@ class EditTravelViewModel (id:Int?, travelDao: TravelDao) : ViewModel(){
     val uiState : StateFlow<Travel> = _uiState.asStateFlow()
 
     init{
-        id?.let {
-            id->
+        id?.let {id->
             viewModelScope.launch {
                 travelDao.findById(id)?.let {travel ->
                     _uiState.value = _uiState.value.copy(
+                        id = travel.id,
                         destino = travel.destino,
                         finalidade = travel.finalidade,
                         inicio = travel.inicio,
@@ -87,11 +105,23 @@ class EditTravelViewModel (id:Int?, travelDao: TravelDao) : ViewModel(){
     fun cadastrarViagem():Boolean{
         try {
             _uiState.value.validateFields()
-
+            viewModelScope.launch {
+                    try {
+                        travelDao.upsert(_uiState.value.toTravel())
+                        _uiState.value = _uiState.value.copy(isSaved = true)
+                    }
+                    catch (e: Exception){
+                        _uiState.value = _uiState.value.copy(errorMessage = e.message ?: "Unknown error")
+                    }
+            }
             return true
         }catch (e:Exception){
             _uiState.value = _uiState.value.copy(errorMessage = e.message ?: "Unknown error")
             return false
         }
+    }
+
+    fun cleanValidationValues() {
+        _uiState.value = _uiState.value.copy(errorMessage = "", isSaved = false)
     }
 }

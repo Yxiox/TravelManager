@@ -26,7 +26,8 @@ data class LoginUser(
 }
 
 class LoginUserViewModel (
-    private val userDao: UserDao
+    private val userDao: UserDao,
+    val dataManager: DataManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUser())
     val uiState : StateFlow<LoginUser> = _uiState.asStateFlow()
@@ -49,6 +50,7 @@ class LoginUserViewModel (
                     if (u != null){
                         if (u.senha == senha){
                             _uiState.value = _uiState.value.copy(logged = true)
+                            dataManager.saveUserId(u.id.toString())
                         }
                         else{
                             throw Exception("Login ou senha inválidos")

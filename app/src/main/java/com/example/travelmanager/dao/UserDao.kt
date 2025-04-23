@@ -31,5 +31,6 @@ interface UserDao {
 
     @Query("select * from User u where u.login =:login")
     suspend fun findByLogin(login:String):User
-
 }
+
+

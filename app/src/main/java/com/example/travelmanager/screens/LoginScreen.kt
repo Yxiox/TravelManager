@@ -27,6 +27,7 @@ import com.example.myregistry.components.ErrorDialog
 import com.example.myregistry.components.MyPasswordField
 import com.example.myregistry.components.MyTextField
 import com.example.travelmanager.R
+import com.example.travelmanager.data.DataManager
 import com.example.travelmanager.data.LoginUserViewModel
 import com.example.travelmanager.database.AppDatabase
 import com.example.travelmanager.factory.LoginUserViewModelFactory
@@ -35,13 +36,15 @@ import com.example.travelmanager.factory.LoginUserViewModelFactory
 @Composable
 fun LoginScreen(
     onLogin:()->Unit,
-    onRegister:()->Unit){
+    onRegister:()->Unit,
+    dataManager: DataManager
+    ){
 
     val ctx = LocalContext.current
     val userDao = AppDatabase.getDatabase(ctx).userDao()
 
     val loginUserViewModel : LoginUserViewModel = viewModel(
-        factory = LoginUserViewModelFactory(userDao)
+        factory = LoginUserViewModelFactory(userDao,dataManager)
     )
     var loginUser = loginUserViewModel.uiState.collectAsState()
 
@@ -67,7 +70,7 @@ fun LoginScreen(
 
         LaunchedEffect(loginUser.value.logged) {
             if (loginUser.value.logged){
-                Toast.makeText(ctx, "Login Succesfull", Toast.LENGTH_SHORT).show()
+                Toast.makeText(ctx, "Login Succesfull ID:${loginUserViewModel.dataManager.getUserId()}", Toast.LENGTH_SHORT).show()
                 loginUserViewModel.cleanValidationValues()
                 onLogin()
             }
