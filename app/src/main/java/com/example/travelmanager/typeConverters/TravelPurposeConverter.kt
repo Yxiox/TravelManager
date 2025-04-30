@@ -5,7 +5,7 @@ import com.example.travelmanager.data.TravelPurposeEnum
 
 class TravelPurposeConverter {
     @TypeConverter
-    fun fromString(purpose: TravelPurposeEnum): String {
+    fun fromEnum(purpose: TravelPurposeEnum): String {
         return purpose.name
     }
 

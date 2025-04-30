@@ -10,13 +10,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class Travel(
     val id:Int = 0,
     val destino : String = "",
-    val inicio : String?,
-    val fim : String?,
-    val finalidade : String = "",
+    val inicio : LocalDateTime?,
+    val fim : LocalDateTime?,
+    val finalidade : TravelPurposeEnum?,
     val orcamento : Float = 0f,
     val userId : Int = 0,
     val errorMessage : String = "",
@@ -40,7 +41,7 @@ data class Travel(
             destino = destino,
             inicio = inicio!!,
             fim = fim!!,
-            finalidade = finalidade,
+            finalidade = finalidade!!,
             orcamento = orcamento,
             userId = userId
         )
@@ -57,7 +58,7 @@ class EditTravelViewModel (
         destino = "",
         inicio = null,
         fim = null,
-        finalidade = "",
+        finalidade = null,
         orcamento = 0f,
         errorMessage = ""
     ))
@@ -85,17 +86,17 @@ class EditTravelViewModel (
 
     }
 
-    fun onInicioChange(inicio: LocalDate){
-        _uiState.value = _uiState.value.copy(inicio = inicio.toString())
+    fun onInicioChange(inicio: LocalDateTime){
+        _uiState.value = _uiState.value.copy(inicio = inicio)
 
     }
 
-    fun onFimChange(fim: LocalDate){
-        _uiState.value = _uiState.value.copy(fim = fim.toString())
+    fun onFimChange(fim: LocalDateTime){
+        _uiState.value = _uiState.value.copy(fim = fim)
 
     }
 
-    fun onFinalidadeChange(finalidade: String){
+    fun onFinalidadeChange(finalidade: TravelPurposeEnum){
         _uiState.value = _uiState.value.copy(finalidade = finalidade)
 
     }

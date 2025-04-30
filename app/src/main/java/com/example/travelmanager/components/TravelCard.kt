@@ -22,6 +22,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.travelmanager.R
+import com.example.travelmanager.data.TravelPurposeEnum
 import com.example.travelmanager.entity.Travel
 
 @Composable
@@ -38,7 +39,7 @@ fun TravelCard(travel: Travel,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column (Modifier.padding(horizontal = 10.dp)) {
-                if (travel.finalidade == "lazer") Image(painter = painterResource(R.drawable.palmtree), contentDescription = "Lazer", modifier = Modifier.size(50.dp)) else Icon(Icons.Default.Email, contentDescription = "", Modifier.size(50.dp))
+                if (travel.finalidade == TravelPurposeEnum.lazer) Image(painter = painterResource(R.drawable.palmtree), contentDescription = "Lazer", modifier = Modifier.size(50.dp)) else Icon(Icons.Default.Email, contentDescription = "", Modifier.size(50.dp))
             }
             Column (Modifier.padding(5.dp )){
                 Text("Destino ${travel.destino}")

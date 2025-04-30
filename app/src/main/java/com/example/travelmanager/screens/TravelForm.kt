@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,6 +45,7 @@ import com.example.myregistry.components.MyTextField
 import com.example.travelmanager.data.DataManager
 import com.example.travelmanager.data.EditTravelViewModel
 import com.example.travelmanager.data.LoginUserViewModel
+import com.example.travelmanager.data.TravelPurposeEnum
 import com.example.travelmanager.database.AppDatabase
 import com.example.travelmanager.factory.EditTravelViewModelFactory
 import com.example.travelmanager.factory.LoginUserViewModelFactory
@@ -80,7 +82,7 @@ fun TravelForm(
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = LocalDate.now().toEpochDay() * 24 * 60 * 60 * 1000
     )
-    var selectedOption by remember { mutableStateOf("") }
+    var selectedOption by remember { mutableStateOf(TravelPurposeEnum.lazer)}
     Column(
         modifier = Modifier.verticalScroll(state = rememberScrollState(), enabled = true)
             .padding(25.dp).fillMaxSize()
@@ -93,14 +95,29 @@ fun TravelForm(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
+            val statuses = TravelPurposeEnum.values()
+            statuses.forEach { status ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = selectedOption == status,
+                        onClick = { editTravelViewModel.onFinalidadeChange(status) }
+                    )
+                    Text(
+                        text = status.name,
+                        modifier = Modifier.clickable { editTravelViewModel.onFinalidadeChange(status) }
+                    )
+                }
+            }
+
+
             RadioButton(
-                selected = travel.value.finalidade == "lazer",
-                onClick = { editTravelViewModel.onFinalidadeChange("lazer") }
+                selected = travel.value.finalidade == TravelPurposeEnum.lazer,
+                onClick = { editTravelViewModel.onFinalidadeChange(TravelPurposeEnum.lazer) }
             )
             Text(text = "À lazer", modifier = Modifier.padding(start = 8.dp), color = Color.White)
             RadioButton(
-                selected = travel.value.finalidade == "negocios",
-                onClick = { editTravelViewModel.onFinalidadeChange("negocios") }
+                selected = travel.value.finalidade == TravelPurposeEnum.negocios,
+                onClick = { editTravelViewModel.onFinalidadeChange(TravelPurposeEnum.negocios) }
             )
             Text(
                 text = "À negócios",
@@ -167,7 +184,7 @@ fun TravelForm(
                                 editTravelViewModel.onInicioChange(
                                     Instant.ofEpochMilli(it)
                                         .atZone(ZoneId.systemDefault())
-                                        .toLocalDate()
+                                        .toLocalDateTime()
                                 )
                             }
                             showDatePickerInicio = false
@@ -195,7 +212,7 @@ fun TravelForm(
                                 editTravelViewModel.onFimChange(
                                     Instant.ofEpochMilli(it)
                                         .atZone(ZoneId.systemDefault())
-                                        .toLocalDate()
+                                        .toLocalDateTime()
                                 )
                             }
                             showDatePickerFim = false
