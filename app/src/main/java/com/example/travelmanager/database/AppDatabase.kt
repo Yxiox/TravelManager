@@ -4,16 +4,24 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.travelmanager.dao.TravelDao
 import com.example.travelmanager.dao.UserDao
 import com.example.travelmanager.entity.Travel
 import com.example.travelmanager.entity.User
+import com.example.travelmanager.typeConverters.LocalDateConverter
+import com.example.travelmanager.typeConverters.TravelPurposeConverter
 
 @Database(
     entities = [User::class, Travel::class],
     version = 1,
     exportSchema = false
 )
+@TypeConverters(
+    TravelPurposeConverter::class,
+    LocalDateConverter::class
+)
+
 
 abstract class AppDatabase:RoomDatabase() {
     abstract fun userDao():UserDao

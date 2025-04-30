@@ -41,9 +41,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myregistry.components.MyTextField
+import com.example.travelmanager.data.DataManager
 import com.example.travelmanager.data.EditTravelViewModel
+import com.example.travelmanager.data.LoginUserViewModel
 import com.example.travelmanager.database.AppDatabase
 import com.example.travelmanager.factory.EditTravelViewModelFactory
+import com.example.travelmanager.factory.LoginUserViewModelFactory
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -54,16 +57,21 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun TravelForm(
     backToMain:()->Unit,
-    id:Int?
+    id:Int?,
+    dataManager:DataManager
     ) {
     val ctx = LocalContext.current
 
     val travelDao = AppDatabase.getDatabase(ctx).travelDao()
+    val userDao = AppDatabase.getDatabase(ctx).userDao()
 
     Log.d("onEdit", "Id ${id}")
 
+    val loginUserViewModel : LoginUserViewModel = viewModel(
+        factory = LoginUserViewModelFactory(userDao,dataManager)
+    )
     val editTravelViewModel: EditTravelViewModel = viewModel(
-        factory = EditTravelViewModelFactory(id,travelDao)
+        factory = EditTravelViewModelFactory(id,travelDao, loginUserViewModel)
     )
     var travel = editTravelViewModel.uiState.collectAsState()
 

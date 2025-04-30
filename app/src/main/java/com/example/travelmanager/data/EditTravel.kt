@@ -3,6 +3,7 @@ package com.example.travelmanager.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelmanager.dao.TravelDao
+import com.example.travelmanager.dao.UserDao
 import com.example.travelmanager.entity.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +33,7 @@ data class Travel(
             throw Exception("Data de retorno é obrigatório")
         }
     }
-    fun toTravel():com.example.travelmanager.entity.Travel{
+    fun toTravel(userId: Int):com.example.travelmanager.entity.Travel{
 
         return com.example.travelmanager.entity.Travel(
             id = id,
@@ -49,7 +50,8 @@ data class Travel(
 
 class EditTravelViewModel (
     id:Int?,
-    private val travelDao: TravelDao
+    private val travelDao: TravelDao,
+    private val loginUserViewModel: LoginUserViewModel
 ) : ViewModel(){
     private val _uiState = MutableStateFlow(Travel(
         destino = "",
@@ -107,7 +109,7 @@ class EditTravelViewModel (
             _uiState.value.validateFields()
             viewModelScope.launch {
                     try {
-                        travelDao.upsert(_uiState.value.toTravel())
+                        travelDao.upsert(_uiState.value.toTravel(loginUserViewModel.dataManager.getUserId()!!.toInt()))
                         _uiState.value = _uiState.value.copy(isSaved = true)
                     }
                     catch (e: Exception){

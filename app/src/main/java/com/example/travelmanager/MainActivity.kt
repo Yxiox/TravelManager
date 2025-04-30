@@ -135,16 +135,20 @@ class MainActivity : ComponentActivity() {
                             }
                             composable(route = "MainScreen") {
                                 MainScreen(
-                                    onEdit = {navController.navigate("TravelForm/${it}")})
+                                    onEdit = {navController.navigate("TravelForm/${it}")},
+                                    dataManager = dataManager)
                             }
                             composable(route = "TravelForm") {
                                 TravelForm(id=null,
-                                    backToMain = {navController.navigateUp()} )
+                                    backToMain = {navController.navigateUp()},
+                                    dataManager = dataManager)
                             }
                             composable(route = "TravelForm/{id}", arguments = listOf(navArgument("id"){type=NavType.IntType})) { backStackEntry ->
                                 val id = backStackEntry.arguments?.getInt("id")
                                 TravelForm(id = id,
-                                    backToMain = {navController.navigateUp()} )
+                                    backToMain = {navController.navigateUp()},
+                                    dataManager = dataManager)
+
                             }
                         }
                     }
