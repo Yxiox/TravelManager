@@ -19,6 +19,7 @@ data class Travel(
     val fim : LocalDateTime?,
     val finalidade : TravelPurposeEnum?,
     val orcamento : Float = 0f,
+    val roteiro: String?,
     val userId : Int = 0,
     val errorMessage : String = "",
     val isSaved:Boolean = false
@@ -43,7 +44,8 @@ data class Travel(
             fim = fim!!,
             finalidade = finalidade!!,
             orcamento = orcamento,
-            userId = userId
+            userId = userId,
+            roteiro = roteiro!!,
         )
     }
 
@@ -60,7 +62,8 @@ class EditTravelViewModel (
         fim = null,
         finalidade = null,
         orcamento = 0f,
-        errorMessage = ""
+        errorMessage = "",
+        roteiro = ""
     ))
     val uiState : StateFlow<Travel> = _uiState.asStateFlow()
 

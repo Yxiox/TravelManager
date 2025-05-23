@@ -13,5 +13,6 @@ data class Travel(
     val fim : LocalDateTime?,
     val finalidade : TravelPurposeEnum,
     val orcamento : Float,
-    val userId : Int
+    val userId : Int,
+    val roteiro : String?
 )

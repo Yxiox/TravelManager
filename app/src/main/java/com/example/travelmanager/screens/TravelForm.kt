@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myregistry.components.MyTextField
@@ -99,18 +100,19 @@ fun TravelForm(
             statuses.forEach { status ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(
-                        selected = selectedOption == status,
+                        selected = travel.value.finalidade == status,
                         onClick = { editTravelViewModel.onFinalidadeChange(status) }
                     )
                     Text(
-                        text = status.name,
+                        text = status.name.toUpperCase(),
+                        color = Color.White,
                         modifier = Modifier.clickable { editTravelViewModel.onFinalidadeChange(status) }
                     )
                 }
             }
 
 
-            RadioButton(
+           /* RadioButton(
                 selected = travel.value.finalidade == TravelPurposeEnum.lazer,
                 onClick = { editTravelViewModel.onFinalidadeChange(TravelPurposeEnum.lazer) }
             )
@@ -123,7 +125,7 @@ fun TravelForm(
                 text = "À negócios",
                 modifier = Modifier.padding(start = 8.dp),
                 color = Color.White
-            )
+            )*/
         }
 
 
