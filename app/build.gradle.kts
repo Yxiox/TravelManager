@@ -5,6 +5,14 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+val geminiApiKey: String = project
+    .rootProject
+    .file("local.properties")
+    .readLines()
+    .find { it.startsWith("GEMINI_API_KEY=") }
+    ?.substringAfter("=")
+    ?: throw GradleException("GEMINI_API_KEY não encontrado em local.properties")
+
 android {
     namespace = "com.example.travelmanager"
     compileSdk = 35
@@ -15,7 +23,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
+        buildConfigField("String", "apiKey", "\"$geminiApiKey\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -37,10 +45,13 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+
     }
 }
 
 dependencies {
+
     val nav_version = "2.8.9"
 
 

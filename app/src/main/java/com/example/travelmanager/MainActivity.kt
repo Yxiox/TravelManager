@@ -45,6 +45,7 @@ import com.example.travelmanager.screens.LoginScreen
 import com.example.travelmanager.screens.MainScreen
 import com.example.travelmanager.screens.RegisterScreen
 import com.example.travelmanager.screens.TravelForm
+import com.example.travelmanager.screens.TravelJournal
 import com.example.travelmanager.ui.theme.TravelManagerTheme
 import java.time.LocalDate
 
@@ -136,7 +137,9 @@ class MainActivity : ComponentActivity() {
                             composable(route = "MainScreen") {
                                 MainScreen(
                                     onEdit = {navController.navigate("TravelForm/${it}")},
-                                    dataManager = dataManager)
+                                    dataManager = dataManager,
+                                    onCreateJournal = {navController.navigate("TravelJournal/${it}")}
+                                    )
                             }
                             composable(route = "TravelForm") {
                                 TravelForm(id=null,
@@ -149,6 +152,12 @@ class MainActivity : ComponentActivity() {
                                     backToMain = {navController.navigateUp()},
                                     dataManager = dataManager)
 
+                            }
+                            composable(route = "TravelJournal/{id}", arguments = listOf(navArgument("id"){type=NavType.IntType})) { backStackEntry ->
+                                val id = backStackEntry.arguments?.getInt("id")
+                                TravelJournal(id = id,
+                                    backToMain = {navController.navigateUp()},
+                                    dataManager = dataManager)
                             }
                         }
                     }

@@ -32,6 +32,7 @@ import com.example.travelmanager.factory.LoginUserViewModelFactory
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen(onEdit: (Int?) -> Unit,
+               onCreateJournal: (Int) -> Unit,
                dataManager: DataManager){
 
     val ctx = LocalContext.current
@@ -58,7 +59,9 @@ fun MainScreen(onEdit: (Int?) -> Unit,
                     if (travel.userId == loginUserViewModel.dataManager.getUserId()!!.toInt()){
                     TravelCard(travel, onEdit = {
                         onEdit(it)
-                    })
+                    },
+                        onCreateJournal= {onCreateJournal(it)}
+                        )
                     }
                 }
             }

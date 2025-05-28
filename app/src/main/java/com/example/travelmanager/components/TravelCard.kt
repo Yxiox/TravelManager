@@ -9,17 +9,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.travelmanager.R
 import com.example.travelmanager.data.TravelPurposeEnum
@@ -27,7 +30,8 @@ import com.example.travelmanager.entity.Travel
 
 @Composable
 fun TravelCard(travel: Travel,
-               onEdit:(Int) -> Unit){
+               onEdit:(Int) -> Unit,
+               onCreateJournal:(Int) -> Unit){
     Card (modifier = Modifier.fillMaxWidth().padding(15.dp).height(100.dp)){
         Row (modifier = Modifier.pointerInput(Unit){
             detectTapGestures (
@@ -48,7 +52,11 @@ fun TravelCard(travel: Travel,
                 Text("Orçamento: R$ ${travel.orcamento}")
 
             }
-
+            Column (modifier = Modifier.padding(start = 20.dp)) {
+                OutlinedButton(onClick = {onCreateJournal(travel.id)}, modifier = Modifier.width(120.dp)) {
+                    Text("Gerar Roteiro com IA", textAlign = TextAlign.Center)
+                }
+            }
         }
     }
 }

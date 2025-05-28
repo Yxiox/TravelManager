@@ -1,10 +1,15 @@
 package com.example.travelmanager.data
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.travelmanager.BuildConfig
 import com.example.travelmanager.dao.TravelDao
 import com.example.travelmanager.dao.UserDao
 import com.example.travelmanager.entity.User
+import com.google.ai.client.generativeai.GenerativeModel
+import com.google.ai.client.generativeai.type.content
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -77,7 +82,8 @@ class EditTravelViewModel (
                         finalidade = travel.finalidade,
                         inicio = travel.inicio,
                         fim = travel.fim,
-                        orcamento = travel.orcamento
+                        orcamento = travel.orcamento,
+                        roteiro = travel.roteiro
                     )
                 }
             }
@@ -106,6 +112,33 @@ class EditTravelViewModel (
 
     fun onOrcamentoChange(orcamento: Float){
         _uiState.value = _uiState.value.copy(orcamento = orcamento)
+    }
+    fun onRoteiroChange(roteiro: String?){
+        _uiState.value = _uiState.value.copy(roteiro = roteiro)
+    }
+
+    private val generativeModel = GenerativeModel(
+        modelName = "gemini-1.5-flash",
+        apiKey = BuildConfig.apiKey
+    )
+
+    fun sendPrompt(
+        prompt: String
+    ) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = generativeModel.generateContent(
+                    content {
+                        text(prompt)
+                    }
+                )
+                response.text?.let { onRoteiroChange(response.text)
+                }
+            } catch (e: Exception) {
+                onRoteiroChange("Erro ao gerar roteiro")
+            }
+        }
     }
 
     fun cadastrarViagem():Boolean{
