@@ -15,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,8 +25,10 @@ import com.example.travelmanager.components.TravelCard
 import com.example.travelmanager.data.DataManager
 import com.example.travelmanager.data.LoginUserViewModel
 import com.example.travelmanager.data.TravelViewModel
+import com.example.travelmanager.entity.Travel
 import com.example.travelmanager.factory.LoadTravelViewModelFactory
 import com.example.travelmanager.factory.LoginUserViewModelFactory
+import kotlinx.coroutines.launch
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -33,11 +36,14 @@ import com.example.travelmanager.factory.LoginUserViewModelFactory
 @Composable
 fun MainScreen(onEdit: (Int?) -> Unit,
                onCreateJournal: (Int) -> Unit,
-               dataManager: DataManager){
+               dataManager: DataManager,
+               popUpTo: () -> Unit){
 
     val ctx = LocalContext.current
     val travelDao = AppDatabase.getDatabase(ctx).travelDao()
     val userDao = AppDatabase.getDatabase(ctx).userDao()
+
+    val scope = rememberCoroutineScope()
 
     val travelViewModel:TravelViewModel = viewModel(
         factory = LoadTravelViewModelFactory(travelDao = travelDao)
@@ -60,7 +66,13 @@ fun MainScreen(onEdit: (Int?) -> Unit,
                     TravelCard(travel, onEdit = {
                         onEdit(it)
                     },
-                        onCreateJournal= {onCreateJournal(it)}
+                        onCreateJournal= {onCreateJournal(it)},
+                        onDelete= {
+                            scope.launch {
+                                travelDao.delete(it)
+                            }
+                            popUpTo()
+                        }
                         )
                     }
                 }

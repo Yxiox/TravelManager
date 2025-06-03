@@ -42,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myregistry.components.DecimalTextField
 import com.example.myregistry.components.MyTextField
 import com.example.travelmanager.data.DataManager
 import com.example.travelmanager.data.EditTravelViewModel
@@ -59,10 +60,10 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TravelForm(
-    backToMain:()->Unit,
-    id:Int?,
-    dataManager:DataManager
-    ) {
+    backToMain: () -> Unit,
+    id: Int?,
+    dataManager: DataManager
+) {
     val ctx = LocalContext.current
 
     val travelDao = AppDatabase.getDatabase(ctx).travelDao()
@@ -70,11 +71,11 @@ fun TravelForm(
 
     Log.d("onEdit", "Id ${id}")
 
-    val loginUserViewModel : LoginUserViewModel = viewModel(
-        factory = LoginUserViewModelFactory(userDao,dataManager)
+    val loginUserViewModel: LoginUserViewModel = viewModel(
+        factory = LoginUserViewModelFactory(userDao, dataManager)
     )
     val editTravelViewModel: EditTravelViewModel = viewModel(
-        factory = EditTravelViewModelFactory(id,travelDao, loginUserViewModel)
+        factory = EditTravelViewModelFactory(id, travelDao, loginUserViewModel)
     )
     var travel = editTravelViewModel.uiState.collectAsState()
 
@@ -83,13 +84,20 @@ fun TravelForm(
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = LocalDate.now().toEpochDay() * 24 * 60 * 60 * 1000
     )
-    var selectedOption by remember { mutableStateOf(TravelPurposeEnum.lazer)}
+    var selectedOption by remember { mutableStateOf(TravelPurposeEnum.lazer) }
     Column(
-        modifier = Modifier.verticalScroll(state = rememberScrollState(), enabled = true)
-            .padding(25.dp).fillMaxSize()
+        modifier = Modifier
+            .verticalScroll(state = rememberScrollState(), enabled = true)
+            .padding(25.dp)
+            .fillMaxSize()
     ) {
 
-        MyTextField(value = travel.value.destino, onValueChange = {editTravelViewModel.onDestinoChange(it)}, label = "Destino", required = true)
+        MyTextField(
+            value = travel.value.destino,
+            onValueChange = { editTravelViewModel.onDestinoChange(it) },
+            label = "Destino",
+            required = true
+        )
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -106,36 +114,27 @@ fun TravelForm(
                     Text(
                         text = status.name.toUpperCase(),
                         color = Color.White,
-                        modifier = Modifier.clickable { editTravelViewModel.onFinalidadeChange(status) }
+                        modifier = Modifier.clickable {
+                            editTravelViewModel.onFinalidadeChange(
+                                status
+                            )
+                        }
                     )
                 }
             }
-
-
-           /* RadioButton(
-                selected = travel.value.finalidade == TravelPurposeEnum.lazer,
-                onClick = { editTravelViewModel.onFinalidadeChange(TravelPurposeEnum.lazer) }
-            )
-            Text(text = "À lazer", modifier = Modifier.padding(start = 8.dp), color = Color.White)
-            RadioButton(
-                selected = travel.value.finalidade == TravelPurposeEnum.negocios,
-                onClick = { editTravelViewModel.onFinalidadeChange(TravelPurposeEnum.negocios) }
-            )
-            Text(
-                text = "À negócios",
-                modifier = Modifier.padding(start = 8.dp),
-                color = Color.White
-            )*/
         }
 
 
         Row(Modifier.padding(vertical = 10.dp)) {
             Row(
-                Modifier.border(
-                    width = 0.5.dp,
-                    color = Color.White,
-                    shape = RoundedCornerShape(5.dp)
-                ).fillMaxWidth().padding(horizontal = 5.dp),
+                Modifier
+                    .border(
+                        width = 0.5.dp,
+                        color = Color.White,
+                        shape = RoundedCornerShape(5.dp)
+                    )
+                    .fillMaxWidth()
+                    .padding(horizontal = 5.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -152,115 +151,120 @@ fun TravelForm(
                 ) { Text("Alterar Data") }
             }
         }
-            Row(Modifier.padding(vertical = 10.dp)) {
+        Row(Modifier.padding(vertical = 10.dp)) {
 
-                Row(
-                    Modifier.border(
+            Row(
+                Modifier
+                    .border(
                         width = 0.5.dp,
                         color = Color.White,
                         shape = RoundedCornerShape(5.dp)
-                    ).fillMaxWidth().padding(horizontal = 5.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        "Data de fim: ${
-                            travel.value.fim?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                        }", color = Color.White, fontWeight = FontWeight.W900
                     )
-                    OutlinedButton(
-                        onClick = { showDatePickerFim = true },
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
-                        border = BorderStroke(0.2.dp, Color.White),
-                        shape = RoundedCornerShape(5.dp)
-                    ) { Text("Alterar Data") }
-                }
+                    .fillMaxWidth()
+                    .padding(horizontal = 5.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Data de fim: ${
+                        travel.value.fim?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    }", color = Color.White, fontWeight = FontWeight.W900
+                )
+                OutlinedButton(
+                    onClick = { showDatePickerFim = true },
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+                    border = BorderStroke(0.2.dp, Color.White),
+                    shape = RoundedCornerShape(5.dp)
+                ) { Text("Alterar Data") }
             }
+        }
 
-            if (showDatePickerInicio) {
-                DatePickerDialog(
-                    onDismissRequest = { showDatePickerInicio = false },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            datePickerState.selectedDateMillis?.let {
-                                editTravelViewModel.onInicioChange(
-                                    Instant.ofEpochMilli(it)
-                                        .atZone(ZoneId.systemDefault())
-                                        .toLocalDateTime()
-                                )
-                            }
-                            showDatePickerInicio = false
-                        }) {
-                            Text("OK")
+        if (showDatePickerInicio) {
+            DatePickerDialog(
+                onDismissRequest = { showDatePickerInicio = false },
+                confirmButton = {
+                    TextButton(onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            editTravelViewModel.onInicioChange(
+                                Instant.ofEpochMilli(it)
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDateTime()
+                            )
                         }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showDatePickerInicio = false }) {
-                            Text("Cancel")
-                        }
+                        showDatePickerInicio = false
+                    }) {
+                        Text("OK")
                     }
-                ) {
-                    DatePicker(state = datePickerState)
-                }
-            }
-
-            if (showDatePickerFim) {
-                DatePickerDialog(
-                    modifier = Modifier.fillMaxWidth(),
-                    onDismissRequest = { showDatePickerFim = false },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            datePickerState.selectedDateMillis?.let {
-                                editTravelViewModel.onFimChange(
-                                    Instant.ofEpochMilli(it)
-                                        .atZone(ZoneId.systemDefault())
-                                        .toLocalDateTime()
-                                )
-                            }
-                            showDatePickerFim = false
-                        }) {
-                            Text("OK")
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showDatePickerFim = false }) {
-                            Text("Cancel")
-                        }
-                    }
-                ) {
-                    DatePicker(state = datePickerState)
-                }
-            }
-
-
-            MyTextField(
-                value = travel.value.orcamento.toString(), onValueChange = { newValue: String ->
-                    val cleanedValue = newValue.filter { it.isDigit() }
-                    val parsedValue = cleanedValue.toFloat().div(100)
-                    editTravelViewModel.onOrcamentoChange(parsedValue)
                 },
-                label = "Orçamento",
-                required = true
-            )
+                dismissButton = {
+                    TextButton(onClick = { showDatePickerInicio = false }) {
+                        Text("Cancel")
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        }
 
-            OutlinedButton(
-                onClick = {editTravelViewModel.cadastrarViagem()},
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = Color.Black,
-                    containerColor = Color.White
-                ),
-                border = BorderStroke(0.2.dp, Color.White),
-                shape = RoundedCornerShape(5.dp),
-                modifier = Modifier.fillMaxWidth().height(60.dp)
-            ) { Text("Cadastrar viagem") }
+        if (showDatePickerFim) {
+            DatePickerDialog(
+                modifier = Modifier.fillMaxWidth(),
+                onDismissRequest = { showDatePickerFim = false },
+                confirmButton = {
+                    TextButton(onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            editTravelViewModel.onFimChange(
+                                Instant.ofEpochMilli(it)
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDateTime()
+                            )
+                        }
+                        showDatePickerFim = false
+                    }) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDatePickerFim = false }) {
+                        Text("Cancel")
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        }
+
+        var orcamento by remember { mutableStateOf("") }
+        DecimalTextField(
+            value = orcamento,
+            onValueChange = { new ->
+                orcamento = new
+                val parsed = new.toFloatOrNull() ?: 0f
+                editTravelViewModel.onOrcamentoChange(parsed)
+            },
+            label = "Orçamento",
+            required = true
+        )
+
+        OutlinedButton(
+            onClick = { editTravelViewModel.cadastrarViagem() },
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = Color.Black,
+                containerColor = Color.White
+            ),
+            border = BorderStroke(0.2.dp, Color.White),
+            shape = RoundedCornerShape(5.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+        ) { Text("Cadastrar viagem") }
 
         LaunchedEffect(travel.value.isSaved) {
-            if (travel.value.isSaved){
+            if (travel.value.isSaved) {
                 Toast.makeText(ctx, "Travel registered", Toast.LENGTH_SHORT).show()
                 editTravelViewModel.cleanValidationValues()
                 backToMain()
-            }
-            else{
+            } else {
             }
         }
 

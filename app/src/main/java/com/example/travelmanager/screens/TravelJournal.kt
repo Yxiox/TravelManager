@@ -1,6 +1,7 @@
 package com.example.travelmanager.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,9 +15,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.platform.LocalContext
@@ -39,6 +42,7 @@ fun TravelJournal(
 
     val travelDao = AppDatabase.getDatabase(ctx).travelDao()
     val userDao = AppDatabase.getDatabase(ctx).userDao()
+
 
     Log.d("onEdit", "Id $id")
 
@@ -70,7 +74,12 @@ fun TravelJournal(
             if (travel.value.roteiro.isNullOrEmpty()) {
                 OutlinedButton(
                     onClick = {
-                        editTravelViewModel.sendPrompt("Estou fazendo uma viagem à ${travel.value.finalidade} para ${travel.value.destino}, minha saída será em ${travel.value.inicio} e voltarei em ${travel.value.fim}. Preciso de um roteiro para minha viagem. Meu orçamento é de ${travel.value.orcamento}, cite o que couber no orçamento, caso seja impossível de fazer todos os essenciais com este orçamento, quero que me diga o que falta e de sugestões. Vou lhe passar algumas considerações, caso esteja vazio daqui em diante, desconsidere esta frase: $newChanges")
+                        editTravelViewModel.sendPrompt("Você está inserido no meu aplicativo, não coloque cabeçalho ou textos adicionais em sua resposta. Segue script: 'Estou fazendo uma viagem à ${travel.value.finalidade} para ${travel.value.destino}, minha saída será em ${travel.value.inicio} e voltarei em ${travel.value.fim}. Preciso de um roteiro para minha viagem. Meu orçamento é de ${travel.value.orcamento}, cite o que couber no orçamento, caso seja impossível de fazer todos os essenciais com este orçamento, quero que me diga o que falta e de sugestões.' A partir daqui ficarão as considerações do usuário, as considerações devem ser levadas com maior prioridade que todas as constatações até o momento, sobrendo-as: $newChanges")
+                        Toast.makeText(
+                            ctx,
+                            "Aguarde! Em processamento!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -100,7 +109,15 @@ fun TravelJournal(
                 }
 
                 OutlinedButton(
-                    onClick = {},
+                    onClick = {
+                        editTravelViewModel.sendPrompt("Você está inserido no meu aplicativo, não coloque cabeçalho ou textos adicionais em sua resposta. Segue script: 'Estou fazendo uma viagem à ${travel.value.finalidade} para ${travel.value.destino}, minha saída será em ${travel.value.inicio} e voltarei em ${travel.value.fim}. Preciso de um roteiro para minha viagem. Meu orçamento é de ${travel.value.orcamento}, cite o que couber no orçamento, caso seja impossível de fazer todos os essenciais com este orçamento, quero que me diga o que falta e de sugestões.' A partir daqui ficarão as considerações do usuário, as considerações devem ser levadas com maior prioridade que todas as constatações até o momento, sobrendo-as *IMPORTANTE, apenas mencione as considerações se houverem, se não houver considerações, NÃO MENCIONE*: $newChanges")
+                        editTravelViewModel.onRoteiroChange("")
+                        Toast.makeText(
+                            ctx,
+                            "Aguarde! Em processamento!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                              },
                     modifier = Modifier
                         .weight(1f)
                         .padding(10.dp)
@@ -138,5 +155,15 @@ fun TravelJournal(
                 }
             }
         )
+    }
+
+    LaunchedEffect(travel.value.isSaved) {
+        if (travel.value.isSaved) {
+            Toast.makeText(
+                ctx,
+                "Roteiro Salvo Com Sucesso!",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 }

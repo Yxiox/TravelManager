@@ -41,6 +41,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.travelmanager.data.DataManager
+import com.example.travelmanager.screens.About
 import com.example.travelmanager.screens.LoginScreen
 import com.example.travelmanager.screens.MainScreen
 import com.example.travelmanager.screens.RegisterScreen
@@ -63,9 +64,9 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     containerColor = Color(red = 50, green = 50, blue = 50),
                     topBar = { if (currentBackStackEntry.value?.destination?.route != "LoginScreen" && currentBackStackEntry.value?.destination?.route != "RegisterScreen") {TopAppBar(title = { Text("Travel Manager", fontWeight = FontWeight.W900, fontSize = 25.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) },
-                        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.LightGray,titleContentColor = Color.White))}},
+                        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.DarkGray,titleContentColor = Color.White))}},
                     bottomBar = {if (currentBackStackEntry.value?.destination?.route != "LoginScreen" && currentBackStackEntry.value?.destination?.route != "RegisterScreen") {
-                        BottomNavigation (backgroundColor = Color.LightGray) {
+                        BottomNavigation (backgroundColor = Color.DarkGray) {
                             val backStack = navController.currentBackStackEntryAsState()
                             val currentDestination = backStack.value?.destination
                             BottomNavigationItem(
@@ -138,8 +139,15 @@ class MainActivity : ComponentActivity() {
                                 MainScreen(
                                     onEdit = {navController.navigate("TravelForm/${it}")},
                                     dataManager = dataManager,
-                                    onCreateJournal = {navController.navigate("TravelJournal/${it}")}
+                                    onCreateJournal = {navController.navigate("TravelJournal/${it}")},
+                                    popUpTo = {
+                                        navController.navigate("MainScreen") {
+                                        popUpTo("MainScreen") { inclusive = true }
+                                    }}
                                     )
+                            }
+                            composable(route = "About") {
+                                About()
                             }
                             composable(route = "TravelForm") {
                                 TravelForm(id=null,
