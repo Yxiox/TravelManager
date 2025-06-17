@@ -1,5 +1,7 @@
 package com.example.travelmanager.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +39,11 @@ import androidx.compose.ui.unit.dp
 import com.example.travelmanager.R
 import com.example.travelmanager.data.TravelPurposeEnum
 import com.example.travelmanager.entity.Travel
+import java.text.NumberFormat
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TravelCard(
@@ -46,6 +53,9 @@ fun TravelCard(
     onDelete: (Travel) -> Unit
 ) {
     val dismissState = rememberDismissState()
+
+    val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("pt", "BR"))
 
     LaunchedEffect(dismissState) {
         snapshotFlow { dismissState.currentValue }
@@ -104,9 +114,9 @@ fun TravelCard(
                     }
                     Column(Modifier.padding(5.dp)) {
                         Text("Destino ${travel.destino}")
-                        Text("Início: ${travel.inicio}")
-                        Text("Fim: ${travel.fim}")
-                        Text("Orçamento: R$ ${travel.orcamento}")
+                        Text("Início: ${travel.inicio.format(dateFormatter)}")
+                        Text("Fim: ${travel.fim!!.format(dateFormatter)}")
+                        Text("Orçamento: ${currencyFormatter.format(travel.orcamento)}")
                     }
                     Column(modifier = Modifier.padding(start = 20.dp)) {
                         OutlinedButton(

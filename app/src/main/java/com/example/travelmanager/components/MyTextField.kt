@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.KeyboardType
+import java.text.NumberFormat
+import java.util.Locale
 
 @Composable
 fun MyTextField(value:String, onValueChange: (String) -> Unit, label:String, required:Boolean){
@@ -64,6 +66,8 @@ fun DecimalTextField(
     required: Boolean = false
 ) {
     var isTouched by remember { mutableStateOf(false) }
+    val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("pt", "BR"))
+
 
     OutlinedTextField(
         value = value,

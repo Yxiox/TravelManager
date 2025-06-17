@@ -139,8 +139,11 @@ fun TravelForm(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Data de início: ${
+                    "Data de início: ${if(travel.value.inicio != null){
                         travel.value.inicio?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    } else {
+                        "Não preenchido"
+                    }
                     }", color = Color.White, fontWeight = FontWeight.W900
                 )
                 OutlinedButton(
@@ -166,8 +169,11 @@ fun TravelForm(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Data de fim: ${
+                    "Data de fim: ${if(travel.value.fim != null){
                         travel.value.fim?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    } else {
+                        "Não preenchido"   
+                    }
                     }", color = Color.White, fontWeight = FontWeight.W900
                 )
                 OutlinedButton(
